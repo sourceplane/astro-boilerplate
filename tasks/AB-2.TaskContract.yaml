@@ -1,0 +1,14 @@
+apiVersion: orun.io/v1
+kind: TaskContract
+spec:
+  goal: The upstream Astro boilerplate runs on Cloudflare Workers + Static Assets through @astrojs/cloudflare with green checks
+  affects:
+    - apps/web
+    - pnpm-lock.yaml
+    - package.json
+    - turbo.json
+  doneWhen:
+    - pnpm typecheck, lint, test and build are green in Checks
+    - wrangler dev serves the four pages and the optimised image
+  gates:
+    - checks

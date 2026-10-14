@@ -1,0 +1,28 @@
+# The epic's declaration. metadata.name equals the directory name; metadata.key
+# is the task-key prefix this epic reserves (AB → AB-1, AB-2, …). Owner, target
+# date and health are the platform's — never written here.
+apiVersion: orun.io/v1
+kind: Epic
+metadata:
+  name: astro-boilerplate
+  key: AB
+spec:
+  title: "Vercel's Astro boilerplate on Cloudflare Workers"
+  summary: "The Vercel Astro boilerplate — a pre-rendered home page, two server-rendered pages (one setting stale-while-revalidate cache headers) and an optimised-image page — runs on Cloudflare Workers + Static Assets through Astro's own Cloudflare adapter, inside the Cirrus baseline's repository conventions. It is the first non-Next.js port: no OpenNext, the framework's native adapter emits the Worker, and the repository shape (intent, component, checks lane, gated Orun lane) stays the same."
+  state: backlog
+  milestones:
+    - name: "AB0 — the spec"
+      exitCriteria:
+        - "the doc set and the task contracts are on main"
+      tasks: [AB-1]
+    - name: "AB1 — the site on Workers"
+      exitCriteria:
+        - "apps/web is the upstream boilerplate with @astrojs/cloudflare in place of @astrojs/vercel"
+        - "`pnpm typecheck`, `pnpm lint`, `pnpm test` and `pnpm build` are green on main (Checks)"
+        - "`wrangler dev` serves /, /ssr, /ssr-with-swr-caching (with its Cache-Control header) and /image (with the optimised image)"
+      tasks: [AB-2]
+    - name: "AB2 — ready to instantiate"
+      exitCriteria:
+        - "the README says how to run, test, preview and deploy it, and what the cache header does on Cloudflare"
+        - "the as-built status records every departure from the upstream template"
+      tasks: [AB-3]
