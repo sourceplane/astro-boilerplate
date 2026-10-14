@@ -8,7 +8,7 @@ This is the first port without OpenNext. It establishes the shape for every fram
 
 | Field | Value |
 |-------|-------|
-| Status | Draft |
+| Status | ✅ Shipped — AB0–AB2 landed (#1, #2, #3) |
 | Cluster | **AB** (AB0–AB2) |
 | Owner(s) | `apps/web` (the site, with its container-API tests) |
 | Builds on | `cirrus-baseline` conventions; the `blog-starter` port's repository shape |
@@ -16,7 +16,7 @@ This is the first port without OpenNext. It establishes the shape for every fram
 | Changes | Adapter swap, Cloudflare Web Analytics beacon in the layout, build-time image service; the pages, layout and component are untouched |
 | Decisions locked | (1) Astro's Cloudflare adapter, not OpenNext (Astro is not Next). (2) `imageService: 'compile'` — the Worker has no sharp. (3) Tests live in the app (Astro's container API needs Astro's Vite config). (4) Astro 7 + adapter 14 (current majors; the template floats `^5`). |
 | Gate | AB1 is the first user-visible rung. |
-| Shipped as | |
+| Shipped as | `main` after [#3](https://github.com/sourceplane/astro-boilerplate/pull/3); verified locally under `wrangler dev`, deploy gated until a workspace is linked |
 
 ## Read order
 
