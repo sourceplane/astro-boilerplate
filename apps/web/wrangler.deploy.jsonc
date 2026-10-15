@@ -1,0 +1,30 @@
+// What `wrangler deploy` ships: the Worker and the static assets `astro build`
+// emitted, with the settings of wrangler.jsonc beside it.
+//
+// wrangler.jsonc is what the adapter BUILDS from (it has no `main`: the
+// adapter supplies its own server entrypoint). The adapter then writes a
+// deployable copy, dist/server/wrangler.json — but that file exists only after
+// a build, and the deploy lanes check that the config they deploy exists
+// BEFORE they build (and stage each job without dist/). So the deploy names
+// this committed file instead, which says what the generated one says:
+// the built entry, no re-bundling, the build's chunks as ES modules, the
+// client output as assets.
+//
+// Keep it in step with wrangler.jsonc: a name, a compatibility setting or a
+// binding added there belongs here too. src/test/deploy-config.test.ts fails
+// when they disagree.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "astro-boilerplate-web",
+  "main": "./dist/server/entry.mjs",
+  "no_bundle": true,
+  "rules": [{ "type": "ESModule", "globs": ["**/*.js", "**/*.mjs"] }],
+  "upload_source_maps": true,
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true }
+}

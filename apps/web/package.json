@@ -7,7 +7,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "wrangler dev --config dist/server/wrangler.json",
+    "preview": "wrangler dev --config wrangler.deploy.jsonc",
     "astro": "astro",
     "typecheck": "astro check",
     "lint": "astro check",

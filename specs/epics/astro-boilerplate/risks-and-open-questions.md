@@ -46,3 +46,79 @@ Astro components render only under Astro's Vite plugin, so vitest runs in
 `apps/web` with `getViteConfig`. The repository convention of a separate
 `tests/<app>` package is kept for the Next.js ports; here it would only add
 a second Astro toolchain.
+
+## AB-G — No live bootstrap yet (OPEN)
+
+Everything short of the platform is proven on every pull request: the card
+against the build, the blueprint read by the pinned orun, the leak gate, the
+offline bootstrap with the blueprint's own hooks, the site's own plan for the
+02-site merge, and the produced site built, dry-deployed, served and
+smoke-tested in a job tree staged as orun stages it. What is NOT proven is
+the platform's half — the repository created and linked, the Cloudflare
+token minted by `integrations/reconcile`, a real `wrangler deploy`, the
+probes against workers.dev. Hence the registry row is `unlisted` until one
+bootstrap from the tag has come up, as the sibling baselines' first tags
+were.
+
+## AB-H — A custom domain is the owner's step (ACCEPTED)
+
+Attaching a domain to a Worker needs zone-level permissions. The platform
+brokers `workers-deploy` (Workers Scripts, KV, account read — no DNS) and
+`dns-edit` only with zone ids, which a build does not have. Rather than ship a
+parked component (Cirrus's `07-domain` is one), the site's README says how to
+attach the domain, and `SITE_URL` in `intent.yaml` has the deployment record
+probe it. The site builds no absolute links, so the build does not read it.
+
+## AB-I — The lanes looked for the deploy config before the build made it (RESOLVED)
+
+AB1's component named the adapter's generated config,
+`wranglerConfig: dist/server/wrangler.json`. The composition's
+`verify-app-structure` step runs `test -f <wranglerConfig>` right after the
+install and BEFORE `build-app`, in the component's directory of a job tree
+orun stages without `dist/` (`outputDirs`, orun `internal/runner/workspace.go`)
+and that a CI checkout never has anyway. Every lane — the pull-request
+verify lanes and the deploy lanes alike — would have stopped there. Nothing
+had run a lane: the repository was never linked, and the checks lane only
+builds.
+
+Fix: the component names a committed `apps/web/wrangler.deploy.jsonc` —
+the generated config's deploy-relevant settings written down (the built
+entry, `no_bundle`, the chunks as ES modules, `dist/client` as assets) with
+`wrangler.jsonc`'s name, compatibility and bindings. `wrangler.jsonc` stays
+what the adapter builds from: it cannot carry the `main` a deploy needs,
+because the adapter takes the user's `main` as the entry to BUILD.
+
+Rejected: building in the install step (`installCommand: … && turbo run
+build`), which passes the check but reports a broken build as a broken
+install; and a shell expression in `wranglerConfig`.
+
+Guards: `src/test/deploy-config.test.ts` fails when `wrangler.deploy.jsonc`
+and `wrangler.jsonc` disagree on anything but the deploy-only keys, so an
+owner who adds a binding to one is told; `testing/e2e.test.sh` replays
+`verify-app-structure` in a staged tree (red on AB2's config, green on the
+fix) and dry-runs both configs over the same build, failing if they would
+upload different Workers — which is how an adapter upgrade that changes its
+output would surface.
+
+## AB-J — stack-tectonic 0.19.0, not 0.20.0 (SETTLED)
+
+0.20.0 marks the workspace install `scope: lane`; orun ≥ 2.78.2 then installs
+once in the source checkout and stages each job's tree with its top-level
+`node_modules` as a symlink out of the tree. The Next.js sibling
+(`portfolio-starter-kit`, its PK-J) died on it live: Turbopack refuses a
+dependency that resolves outside its root. Astro builds with Vite, and a
+build and a dry deploy of this site in that layout succeeded when tried by
+hand — but no deploy has run from it, and with one job per lane
+(`lane: isolated`) the shared install would save nothing. The site pins
+0.19.0, where the job installs in its own tree, and `testing/e2e.test.sh`
+stages the job with whichever layout the pinned composition plans, so a bump
+is tested, not assumed.
+
+## AB-K — One workflow on a push to main (RESOLVED, inherited)
+
+`orun.run/watch@v1` with `sha:` takes the newest workflow run for the commit
+from ANY workflow. The sibling's first live bootstrap watched `checks.yml` go
+green while `ci.yml`'s deploy lanes had failed (its PK-K). `checks.yml` here
+runs on pull requests and `workflow_dispatch` only, and
+`testing/coverage.test.sh` fails if a shipped workflow other than `ci.yml`
+runs on a push to main.
