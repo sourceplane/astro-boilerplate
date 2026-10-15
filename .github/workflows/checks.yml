@@ -27,6 +27,17 @@ permissions:
 
 jobs:
   checks:
+    # A BOOTSTRAP LANDING IS CHECKED BY `plan` ALONE. The baseline bootstrap
+    # lands on branches named for its tasks (`orun/BASE-…`) and merges each
+    # one as soon as its pull request's CI is green; the convergence that the
+    # merge starts on main installs, builds, deploys and smoke-tests the site
+    # for real, and the bootstrap watches it to green. Running this job there
+    # too was the same build twice, and most of each landing's wait — the same
+    # reason ci.yml skips its lanes on those branches. Its typecheck, lint and
+    # tests are the baseline's, run over a bootstrapped copy of this very tree
+    # by the baseline's own CI before its tag was cut. Every other pull
+    # request runs it.
+    if: ${{ !(github.event_name == 'pull_request' && startsWith(github.head_ref, 'orun/BASE-')) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

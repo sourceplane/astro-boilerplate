@@ -8,15 +8,15 @@ This is the first port without OpenNext. It establishes the shape for every fram
 
 | Field | Value |
 |-------|-------|
-| Status | 🟡 AB0–AB2 shipped (#1–#3); AB3 — a baseline — in progress (AB-4) |
-| Cluster | **AB** (AB0–AB3) |
+| Status | 🟡 AB0–AB3 shipped (#1–#4); AB4 — one landing — in progress (AB-5) |
+| Cluster | **AB** (AB0–AB4) |
 | Owner(s) | `apps/web` (the site, with its container-API tests) |
 | Builds on | `cirrus-baseline` conventions; the `blog-starter` port's repository shape |
 | Upstream | [vercel/examples `framework-boilerplates/astro`](https://github.com/vercel/examples/tree/main/framework-boilerplates/astro) |
 | Changes | Adapter swap, Cloudflare Web Analytics beacon in the layout, build-time image service; the pages, layout and component are untouched but for the home page reading the site's name from `src/site.ts` (AB3) |
 | Decisions locked | (1) Astro's Cloudflare adapter, not OpenNext (Astro is not Next). (2) `imageService: 'compile'` — the Worker has no sharp. (3) Tests live in the app (Astro's container API needs Astro's Vite config). (4) Astro 7 + adapter 14 (current majors; the template floats `^5`). (5) The deploy hands wrangler a committed `wrangler.deploy.jsonc`, held to the adapter's generated config (AB3). |
 | Gate | AB1 is the first user-visible rung. |
-| Shipped as | `main` after [#3](https://github.com/sourceplane/astro-boilerplate/pull/3); verified locally under `wrangler dev`, deploy gated until a workspace is linked. AB3 packages it as a baseline; no live bootstrap yet |
+| Shipped as | `main` after [#3](https://github.com/sourceplane/astro-boilerplate/pull/3); verified locally under `wrangler dev`, deploy gated until a workspace is linked. AB3 packages it as a baseline; `baseline-v1` bootstrapped live from the console on 2026-10-15 (7m07s) |
 
 ## Read order
 
@@ -33,3 +33,4 @@ This is the first port without OpenNext. It establishes the shape for every fram
 | AB1 — the site on Workers | `apps/web` with the Cloudflare adapter, tests, green checks | `wrangler dev` serves all four pages; Checks green |
 | AB2 — ready to instantiate | README, as-built status | a reader can run, test, preview and deploy it |
 | AB3 — a baseline | card, build document, rename, bootstrap tooling, tests; a deploy config the lanes can find before they build | a new site goes from nothing to live in three phases; Baseline CI green |
+| AB4 — one landing | the site in one landing, each bootstrap landing checked by `plan` alone (cirrus-baseline baseline-v22's shape) | a site bootstrapped from the next tag is live faster than baseline-v1's 7m07s |
