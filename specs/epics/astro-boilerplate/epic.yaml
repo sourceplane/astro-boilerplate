@@ -9,7 +9,7 @@ metadata:
 spec:
   title: "Vercel's Astro boilerplate on Cloudflare Workers"
   summary: "The Vercel Astro boilerplate — a pre-rendered home page, two server-rendered pages (one setting stale-while-revalidate cache headers) and an optimised-image page — runs on Cloudflare Workers + Static Assets through Astro's own Cloudflare adapter, inside the Cirrus baseline's repository conventions. It is the first non-Next.js port: no OpenNext, the framework's native adapter emits the Worker, and the repository shape (intent, component, checks lane, gated Orun lane) stays the same."
-  state: completed
+  state: started
   milestones:
     - name: "AB0 — the spec"
       exitCriteria:
@@ -26,3 +26,10 @@ spec:
         - "the README says how to run, test, preview and deploy it, and what the cache header does on Cloudflare"
         - "the as-built status records every departure from the upstream template"
       tasks: [AB-3]
+    - name: "AB3 — a baseline"
+      exitCriteria:
+        - "blueprint.yaml (the console card) and repo-blueprint.yaml (the build) take a new site from nothing to live on stage and prod in three phases"
+        - "a site built from it carries the site only, renamed throughout to its own name, repository and Worker"
+        - "the stage lane's own steps pass in a job tree staged as orun stages it — the deploy config found before the build, the build, the dry deploy"
+        - "Baseline CI is green: contract tests, the blueprint read by the pinned orun, the leak gate, the offline bootstrap and the end-to-end tier"
+      tasks: [AB-4]

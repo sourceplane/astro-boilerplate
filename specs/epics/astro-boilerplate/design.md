@@ -49,5 +49,63 @@ astro-boilerplate-web-<env>`. Locally, `pnpm --filter @app/web preview` runs
 ## 5. Out of scope
 
 React islands (the template lists `react` but configures no integration;
-the port drops the unused dependency), a custom domain, and Cache Rules for
-the SWR page (an account-level setting).
+the port drops the unused dependency), a custom-domain component (§6: the
+brokered deploy token carries no zone permissions, so attaching a domain is
+the owner's step), and Cache Rules for the SWR page (an account-level
+setting).
+
+## 6. The baseline (AB3)
+
+The repository instantiates new sites the way
+[cirrus-baseline](https://github.com/sourceplane/cirrus-baseline) instantiates
+products, and the way its Next.js sibling `portfolio-starter-kit` instantiates
+portfolios: a console card (`blueprint.yaml`) the platform renders, a build
+document (`repo-blueprint.yaml`) `orun new` runs, and a rename engine that
+makes the copy somebody else's.
+
+| Cirrus | Here | Why the difference |
+|---|---|---|
+| six phases (scaffold, foundation + data plane, workers, edge + console, domain, docs) | three: `01-scaffold`, `02-site`, `03-docs` | one component deploys; no data plane, no fleet, no bindings |
+| `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_D1_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | `CLOUDFLARE_API_TOKEN` (`workers-deploy`), `CLOUDFLARE_ACCOUNT_ID` | no D1 |
+| `07-domain` (parked component) | no domain phase; `SITE_URL` per environment, probed by the record | `workers-deploy` has no DNS or zone scope; the site builds no absolute links, so nothing needs the origin at build time |
+| task contracts in `tasks/` | `.baseline/tasks/` | `tasks/` is this repository's own work tree (`intent.yaml` `work:`), where an unkeyed contract is an error |
+| ships its own README | ships `.baseline/product/README.md` as the site's README | this README is about the baseline; a site's owner needs the site's |
+| — | `work-tree.mjs` strips `work:` from the site's intent | a site has no `specs/` or `tasks/` |
+| stack-tectonic 0.20.0 (lane-scoped install) | 0.19.0 (the job installs in its own tree) | the pin its Next.js sibling was proven to need; Astro's build was not tried live in the shared layout (risks AB-J) |
+| one push workflow (`ci.yml`) | `checks.yml` on pull requests only | `orun.run/watch@v1` takes the newest run for a commit from any workflow (risks AB-K) |
+| a `tests/<worker>` package per worker | the app's tests in `apps/web/src/test`; no `tests/web` module | Astro components render only under Astro's Vite config (risks AB-D) |
+| rebrand rules for a SaaS (console prefix, SDK class, CLI bin, API host) | rules for a site: a source link (owner + repo), the `SITE_NAME` seam, the domain, the subdomain, Worker names, secret refs, the repo slug | the identity this tree actually carries |
+
+**Identity in the app** is one literal, `SITE_NAME` in `apps/web/src/site.ts`
+(the home page's `<title>`, its heading and the Code Challenge line). The
+rename writes it with `JSON.stringify`, so any name the card's pattern admits —
+apostrophes and ampersands included — stays a valid string; Astro escapes it
+where it renders. The heading keeps its "Welcome to", which is what the
+deploy's smoke matches: the name is the owner's.
+
+**The deploy config is committed.** The adapter writes a deployable
+`dist/server/wrangler.json` beside the Worker it emits, and AB1's component
+named it. But the composition's lane checks that `wranglerConfig` exists
+*before* `build-app` (`verify-app-structure`), and orun stages each job's tree
+without `dist/` — every lane would have stopped there. `wrangler.deploy.jsonc`
+is that file written down: the built entry (`./dist/server/entry.mjs`,
+`no_bundle`, the chunks as ES modules) and the client output as assets, with
+`wrangler.jsonc`'s settings. Two guards keep it honest: the app's own tests
+fail when it and `wrangler.jsonc` disagree (an owner adding a binding to
+one), and the baseline's end-to-end tier dry-runs it against the adapter's
+generated config over the same build and fails if they would upload
+different Workers (an adapter upgrade changing its output).
+
+**The site's CI is on from its first commit.** `ci.yml` used to wait for an
+`ORUN_CI` repository variable, which a bootstrap has no way to set: every site
+would have converged on nothing. It now plans nothing only while
+`intent.yaml` names the placeholder `ws_CHANGE_ME`, which this repository
+carries and no site does (the scaffold writes the site's workspace, or
+`ws_SET_ME`, which fails loudly).
+
+**Testing without the platform.** `testing/lib/bootstrap.sh` places every
+phase and runs the blueprint's own `run:` hooks, read out of the document, so
+the whole bootstrap short of the platform's typed actions runs in CI on every
+pull request; `testing/e2e.test.sh` then replays the stage lane's steps in a
+job tree staged as orun stages it, serves what it built and runs the
+component's own smoke against it.

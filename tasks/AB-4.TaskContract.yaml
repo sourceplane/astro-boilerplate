@@ -1,0 +1,34 @@
+apiVersion: orun.io/v1
+kind: TaskContract
+metadata:
+  name: AB-4
+  title: "A baseline"
+spec:
+  goal: The repository is an Orun baseline — a card and a build document that take a new Astro site from nothing to live on stage and prod, branded as its own, with gates that prove it offline
+  affects:
+    - blueprint.yaml
+    - repo-blueprint.yaml
+    - BOOTSTRAP.md
+    - README.md
+    - .baseline/**
+    - tooling/rebrand/**
+    - tooling/bootstrap/**
+    - hooks/**
+    - testing/**
+    - docs/phases/**
+    - ai/context/**
+    - .github/workflows/**
+    - intent.yaml
+    - apps/web/**
+    - infra/.gitkeep
+    - packages/.gitkeep
+    - tests/.gitkeep
+    - specs/**
+    - tasks/**
+  doneWhen:
+    - orun (the bootstrap floor and the lane pin) reads repo-blueprint.yaml, and the card agrees with it
+    - the leak gate, the offline bootstrap and the end-to-end tier are green in Baseline CI
+    - the stage lane's own steps pass in a job tree staged as orun stages it, the structure check before the build included
+    - the as-built status records the departures and what is not yet proven live
+  gates:
+    - checks
