@@ -1,40 +1,37 @@
-# Astro
+# apps/web — the site
 
-This directory is a brief example of an [Astro](https://astro.build/) site that can be deployed to Vercel with zero configuration. This demo showcases:
+An [Astro](https://astro.build/) site from Vercel's
+[Astro boilerplate](https://github.com/vercel/examples/tree/main/framework-boilerplates/astro)
+(MIT), running on Cloudflare Workers + Static Assets through Astro's own
+[`@astrojs/cloudflare`](https://docs.astro.build/en/guides/integrations-guide/cloudflare/)
+adapter:
 
-- `/` - A static page (pre-rendered)
-- `/ssr` - A page that uses server-side rendering (through [Vercel Functions](https://vercel.com/docs/functions))
-- `/ssr-with-swr-caching` - Similar to the previous page, but also caches the response on the [Vercel Edge Network](https://vercel.com/docs/edge-network/overview) using `cache-control` headers
-- `/image` - Astro [Asset](https://docs.astro.build/en/guides/images/) using Vercel [Image Optimization](https://vercel.com/docs/image-optimization)
+- `/` — a static page, pre-rendered at build time and served from the assets
+- `/ssr` — a page rendered by the Worker on every request
+- `/ssr-with-swr-caching` — the same, with a `Cache-Control: s-maxage=10,
+  stale-while-revalidate` header (Cloudflare caches it once a Cache Rule
+  covers the route)
+- `/image` — an [Astro asset](https://docs.astro.build/en/guides/images/)
+  through `astro:assets`
+- Cloudflare Web Analytics (set `PUBLIC_CF_BEACON_TOKEN` at build time)
 
-Learn more about [Astro on Vercel](https://vercel.com/docs/frameworks/astro).
+The site's name — the home page's heading and title — is in `src/site.ts`.
+Pages are `.astro` files in `src/pages/`; each is a route named for its file.
+Components and layouts live in `src/components/` and `src/layouts/`, static
+files in `public/`.
 
-## Deploy Your Own
+```bash
+pnpm dev        # astro dev on http://localhost:4321
+pnpm test       # vitest over Astro's container API (src/test)
+pnpm build      # astro build → dist/server (the Worker) + dist/client (assets)
+pnpm preview    # wrangler dev over the built Worker
+```
 
-Deploy your own Astro project with Vercel.
+`wrangler.jsonc` is what the adapter builds from — the Worker's name, its
+compatibility and its bindings. `wrangler.deploy.jsonc` is what deploys and
+what `pnpm preview` serves: the same settings, pointed at the built Worker.
+Add a binding to both; `src/test/deploy-config.test.ts` fails when they
+disagree.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/examples/tree/main/framework-boilerplates/astro&template=astro)
-
-_Live Example: https://astro-template.vercel.app_
-
-## Project Structure
-
-Astro looks for `.astro`, `.md`, or `.js` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components or layouts.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                | Action                                             |
-| :--------------------- | :------------------------------------------------- |
-| `pnpm install`          | Installs dependencies                              |
-| `pnpm run dev`          | Starts local dev server at `localhost:3000`        |
-| `pnpm run build`        | Build your production site to `./dist/`            |
-| `pnpm run preview`      | Preview your build locally, before deploying       |
-| `pnpm run start`       | Starts a production dev server at  `localhost:3000`     |
-| `pnpm run astro ...`    | Run CLI commands like `astro add`, `astro preview` |
-| `pnpm run astro --help` | Get help using the Astro CLI                       |
+How it is deployed — per environment, on merge to `main` — is the
+repository's README and `component.yaml` beside this file.

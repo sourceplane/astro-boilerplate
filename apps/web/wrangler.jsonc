@@ -1,3 +1,7 @@
+// What the adapter builds from: the Worker's name, its compatibility and its
+// bindings (`astro dev` reads them too). It has no `main` — the adapter
+// supplies its own server entrypoint. What deploys is wrangler.deploy.jsonc;
+// keep the two in step (src/test/deploy-config.test.ts holds them to it).
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "astro-boilerplate-web",
