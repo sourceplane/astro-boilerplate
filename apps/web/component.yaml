@@ -48,7 +48,7 @@ spec:
 
     # @astrojs/cloudflare (through the Cloudflare Vite plugin) emits the Worker
     # under dist/server and the static output under dist/client — both deploy
-    # in one `wrangler deploy` of the generated config.
+    # in one `wrangler deploy` of wrangler.deploy.jsonc.
     workerEntrypoint: dist/server/entry.mjs
     assetsDir: dist/client
 
