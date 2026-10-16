@@ -8,7 +8,8 @@ the code departed from `design.md` or from the upstream template.
 | AB0 — the spec | ✅ Shipped | [#1](https://github.com/sourceplane/astro-boilerplate/pull/1) |
 | AB1 — the site on Workers | ✅ Shipped | [#2](https://github.com/sourceplane/astro-boilerplate/pull/2) |
 | AB2 — ready to instantiate | ✅ Shipped | [#3](https://github.com/sourceplane/astro-boilerplate/pull/3) |
-| AB3 — a baseline | 🟡 In progress | this PR (AB-4) |
+| AB3 — a baseline | ✅ Shipped | [#4](https://github.com/sourceplane/astro-boilerplate/pull/4) (AB-4), tagged `baseline-v1` |
+| AB4 — one landing | 🟡 In progress | this PR (AB-5), to be tagged `baseline-v2` |
 
 ## Departures from the upstream template
 
@@ -62,6 +63,29 @@ ships into every site. It now describes the app and credits the template
 | `intent.yaml` | terraform `parameterDefaults`; docs pages under `specs/` | neither; docs pages `ai/context/*` | no terraform component; the pages must exist in a site |
 | discovery roots | `apps/` only on disk | `infra/`, `packages/`, `tests/` carry a `.gitkeep` | `orun validate` and `orun plan` refuse a missing root |
 | `tasks/AB-1..3` | no `metadata` | `metadata.name` and `title` | `orun work check` (≥ v2.79) refuses a contract without them |
+
+## One landing (AB4)
+
+cirrus-baseline's baseline-v22 builds its whole product in one landing
+(`01-product`) and checks each bootstrap pull request with `plan` alone. This
+baseline now does the same (AB-5):
+
+| Before (baseline-v1) | Now | Why |
+|---|---|---|
+| three phases: `01-scaffold`, `02-site`, `03-docs` | two: `01-product` (every module), `03-docs` (hooks only; its name kept, the gap kept, as Cirrus kept `08-docs`) | a landing has a fixed cost (place, PR, checks, merge, convergence start); nothing in the scaffold/site split was order the plan could not carry |
+| `01-scaffold` waited on Checks (install, typecheck, lint, test, build) and `plan`; `02-site` merged without waiting (`wait: false`); `03-docs` waited on both | every landing waits on its PR's CI, which on `orun/BASE-…` is `plan` alone: `ci.yml` skips the lanes and `checks.yml` now skips its job | the convergence on main installs, builds, deploys and smoke-tests the site for real; Checks on the PR was the same build twice, and most of each landing's wait. Its typecheck, lint and tests run over a bootstrapped copy of the same tree in Baseline CI's e2e tier, before a tag is cut |
+| the brokered secrets minted in `02-site`'s `pre` | minted in `01-product`'s `post`, after `repo` and `link`, before `land` | the repository exists and is linked before a secret is written for its project — Cirrus's order |
+| `02-site` seeded the lockfile from the baseline's, then pruned | `pnpm install --lockfile-only` only confirms the placed lockfile | the whole tree is placed at once, so the complete lockfile is already the right one |
+| `.baseline/tasks/01-scaffold`, `02-site` | `.baseline/tasks/01-product` (`affects: [web]` — the retouch set) | one landing, one task |
+| the offline bootstrap committed one landing per phase from an empty repository | the repository's empty first commit, then one per phase | on the platform the first pull request opens against an empty "Initial commit" by `orun`; it is the base the one landing's push is planned against (`testing/placement.test.sh` §4, `testing/e2e.test.sh` §2) |
+| e2e ran the Checks at the scaffold's landing and at the finished site | at the finished site only | there is no scaffold landing, and no landing waits on Checks |
+
+Measured on `baseline-v1` from the console's Build, 2026-10-15
+(`astro-live`, `bst_XYM9M4ZT`): 7m07s end to end — about 1m28s of build
+sandbox start, `01-scaffold` 1m4s, `02-site` 3m19s, `03-docs` 1m16s (its
+landing waited about 33s on Checks) — and the site went live on stage and
+prod. The estimate here is 5 minutes (4 + 1), to be replaced by the first
+bootstrap from `baseline-v2`.
 
 ## Verified (AB3)
 
