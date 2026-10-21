@@ -7,6 +7,6 @@ folder is the adoption; the merge creates the epic in the workspace.
 
 | Epic | Cluster | Status | What it is |
 |------|---------|--------|------------|
-| [`astro-boilerplate/`](./astro-boilerplate/) | **AB** | 🟡 AB4 in progress | Vercel's Astro boilerplate, equivalent in code and function, running on Cloudflare Workers + Static Assets via @astrojs/cloudflare — and an Orun baseline that instantiates it (AB3) |
+| [`astro-boilerplate/`](./astro-boilerplate/) | **AB** | ✅ Shipped (`baseline-v1`, live 2026-10-15); AB4–AB5 on `main`, untagged | Vercel's Astro boilerplate, equivalent in code and function, running on Cloudflare Workers + Static Assets via @astrojs/cloudflare — and an Orun baseline that instantiates it (AB3) |
 
 As-built ≠ intent: what shipped lives in each epic's `IMPLEMENTATION-STATUS.md`.

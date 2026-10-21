@@ -9,7 +9,8 @@ the code departed from `design.md` or from the upstream template.
 | AB1 — the site on Workers | ✅ Shipped | [#2](https://github.com/sourceplane/astro-boilerplate/pull/2) |
 | AB2 — ready to instantiate | ✅ Shipped | [#3](https://github.com/sourceplane/astro-boilerplate/pull/3) |
 | AB3 — a baseline | ✅ Shipped | [#4](https://github.com/sourceplane/astro-boilerplate/pull/4) (AB-4), tagged `baseline-v1` |
-| AB4 — one landing | 🟡 In progress | this PR (AB-5), to be tagged `baseline-v2` |
+| AB4 — one landing | ✅ Shipped | [#5](https://github.com/sourceplane/astro-boilerplate/pull/5) (AB-5) — on `main`, not yet tagged (the next tag ships it); not yet proven live (risk AB-G) |
+| AB5 — the cirrus standard | ✅ Shipped | AB-6 — on `main` after AB4, not yet tagged |
 
 ## Departures from the upstream template
 
@@ -87,6 +88,45 @@ landing waited about 33s on Checks) — and the site went live on stage and
 prod. The estimate here is 5 minutes (4 + 1), to be replaced by the first
 bootstrap from `baseline-v2`.
 
+## The cirrus standard (AB5)
+
+Nothing about the site changed. What changed is the baseline around it:
+
+| What | Before | After | Why |
+|---|---|---|---|
+| orun pin | `kiox.yaml` (v2.15.0) + `kiox.lock`, shipped to every site; "the kiox pin" in `docs/phases/01-product.md` | gone; orun is pinned where it runs, the `orun-action` `version:` in each workflow | nothing ran the kiox pin, and it disagreed with the lanes (v2.78.4) |
+| `root-kiox`, `root-kiox-lock` modules | in `01-product` | removed (`testing/phases.test.sh` and the rebrand's skip list follow) | a site is placed with 54 files: 53 − 2 kiox + 3 docs pages |
+| component docs | none | `apps/web/docs/` — `overview.md`, `architecture.md`, `runbook.md` | cirrus-baseline documents every component; the workspace Docs library renders `docs/` beside each `component.yaml` |
+| how the docs stay true | — | `tooling/catalog/gen-component-docs.py` derives them from the manifest, the Worker config and package scripts; Baseline CI runs it with `--check` | a hand-written copy of a manifest drifts silently |
+| context pack | `operations.md`, `deployment.md` | plus `current.md`, `decisions.md`, `open-risks.md` | cirrus-baseline's shape; the three new pages are this repository's own and no module places them (the leak gate still allows exactly two) |
+| status | AB4 "in progress / this PR"; AB-G "no live bootstrap yet", citing the removed `02-site`; `design.md` naming "the scaffold" as what writes the workspace | AB4 shipped, untagged — the next tag ships it; AB-G: `baseline-v1` went live (2026-10-15), the one-landing shape is not yet proven live — still OPEN; `01-product` writes the workspace | the merge and the live run had happened; the documents had not caught up |
+
+## Verified (AB5)
+
+- `testing/{manifest,phases,coverage,rebrand,retouch,bootstrap-defer}.test.sh`
+  green; `gen-component-docs.py --check` green (1 component, 3 pages).
+- `orun new --status` (v2.58.11, the bootstrap floor): `01-product` 54
+  files, `03-docs` hook-only.
+- `testing/leak.test.sh` (v2.58.11): 54 files derived (53 − 2 kiox + 3 docs
+  pages); ai/context still exactly the two declared pages.
+- `testing/placement.test.sh` (v2.58.11, as Baseline CI runs it): 54 files
+  placed, both landings (`01-product`, `03-docs`), branded, re-tenanted,
+  record rendered; the site's own plan for the 01-product merge deploys
+  `web` to stage and prod side by side; `--resume` changes nothing.
+- `pnpm install --frozen-lockfile`, `wire:fixture`, `typecheck` (0 errors),
+  `lint` (`astro check`, 0 errors, 0 warnings), `test` (6 tests), `build`
+  green.
+- `testing/e2e.test.sh` (v2.78.4): the offline bootstrap places and lands
+  both phases; the finished site passes the Checks sequence; the stage
+  lane's `install-workspace-dependencies`, `verify-app-structure`,
+  `build-app`, `verify-build-output` and `deploy-dry-run` pass in the staged
+  job tree, and the committed deploy config uploads what the adapter's
+  generated one would; under `wrangler dev` the component's own smoke
+  passes, and `/`, `/ssr`, `/ssr-with-swr-caching`, `/image` and its image,
+  `/favicon.ico` and a 404 are the site's own (the new `docs/` pages are not
+  site content).
+- `orun task check AB-6` complete.
+
 ## Verified (AB3)
 
 - `orun new --status` reads the blueprint at v2.58.11 (the bootstrap floor),
@@ -118,6 +158,9 @@ bootstrap from `baseline-v2`.
   `node_modules`) was tried once, by hand: it builds and dry-deploys. Not
   adopted (risks AB-J).
 - Not verified: a live bootstrap against a workspace (risks AB-G).
+- (Note, AB5: on 2026-10-15 a console bootstrap of `baseline-v1` went live
+  on stage and prod in 7m07s — see "One landing (AB4)". AB4's one-landing
+  shape is the part not yet proven live.)
 
 ## Verified (AB1–AB2)
 
