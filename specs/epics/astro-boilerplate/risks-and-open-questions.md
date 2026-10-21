@@ -47,18 +47,24 @@ Astro components render only under Astro's Vite plugin, so vitest runs in
 `tests/<app>` package is kept for the Next.js ports; here it would only add
 a second Astro toolchain.
 
-## AB-G — No live bootstrap yet (OPEN)
+## AB-G — The one-landing shape is not yet proven live (OPEN)
 
-Everything short of the platform is proven on every pull request: the card
-against the build, the blueprint read by the pinned orun, the leak gate, the
-offline bootstrap with the blueprint's own hooks, the site's own plan for the
-02-site merge, and the produced site built, dry-deployed, served and
-smoke-tested in a job tree staged as orun stages it. What is NOT proven is
-the platform's half — the repository created and linked, the Cloudflare
-token minted by `integrations/reconcile`, a real `wrangler deploy`, the
-probes against workers.dev. Hence the registry row is `unlisted` until one
-bootstrap from the tag has come up, as the sibling baselines' first tags
-were.
+`baseline-v1` was: a console bootstrap of it (AB3's three phases,
+`01-scaffold`, `02-site`, `03-docs`) went live on stage and prod on
+2026-10-15 — `astro-live`, `bst_XYM9M4ZT`, 7m07s end to end
+(IMPLEMENTATION-STATUS, "One landing (AB4)"). What `main` builds now is
+AB4's shape — the whole site in one landing (`01-product`), then the record
+(`03-docs`), each bootstrap pull request checked by `plan` alone — and that
+is proven offline on every pull request: the card against the build, the
+blueprint read by the pinned orun, the leak gate, the offline bootstrap with
+the blueprint's own hooks, the site's own plan for the 01-product merge, and
+the produced site built, dry-deployed, served and smoke-tested in a job tree
+staged as orun stages it. It has not been bootstrapped live; `baseline-v2`
+is the first tag that carries it. Closes with one bootstrap from
+`baseline-v2`, whose timing replaces the 5-minute estimate.
+
+(Updated in AB5. Until then this entry read "No live bootstrap yet" and
+cited the 02-site merge, a phase AB4 removed.)
 
 ## AB-H — A custom domain is the owner's step (ACCEPTED)
 

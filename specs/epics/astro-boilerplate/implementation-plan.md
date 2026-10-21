@@ -29,7 +29,7 @@ README (run, test, preview, deploy; the beacon token; the SWR note),
 - the README quick start works from a fresh clone
 - the status file lists every PR and departure
 
-## AB3 — a baseline
+## AB3 — a baseline (AB-4) ✅
 
 `blueprint.yaml`, `repo-blueprint.yaml`, `.baseline/` (identity, task
 contracts, the site's README), `tooling/rebrand`, `tooling/bootstrap`,
@@ -47,13 +47,65 @@ seam and the committed deploy config in `apps/web` (design §6).
 - the status file records what is proven offline and what only a live
   bootstrap can prove
 
+## AB4 — one landing (AB-5) ✅
+
+The site in one landing, the way cirrus-baseline's baseline-v22 builds its
+product: `repo-blueprint.yaml` places every module in `01-product` and
+records it in `03-docs` (hooks only); the card's programme names the same
+two; each bootstrap pull request is checked by `plan` alone (`ci.yml` skips
+the lanes and `checks.yml` its job on `orun/BASE-…` branches); the brokered
+secrets are minted in `01-product`'s `post`, after `repo` and `link`.
+
+**Done when**
+- `testing/phases.test.sh` holds the two phases and their hooks, and the
+  offline bootstrap and the e2e tier pass over one landing
+- Baseline CI is green
+- a site bootstrapped from the next tag is live faster than baseline-v1's
+  measured 7m07s — not yet: `baseline-v2` carries AB4 but has not been
+  bootstrapped live (risk AB-G)
+
+## AB5 — the cirrus standard (AB-6) ✅
+
+Bring the baseline to cirrus-baseline's standard, with nothing about the
+site itself changing.
+
+- **No kiox.** `kiox.yaml`/`kiox.lock` pinned an orun (v2.15.0) that nothing
+  ran: every workflow installs orun itself through `orun-action` with its own
+  `version:`. The files, their two modules, the rebrand's skip entry and the
+  01-product phase document's mention go.
+- **Component docs.** `tooling/catalog/gen-component-docs.py` writes the
+  component's `docs/overview.md`, `docs/architecture.md` and
+  `docs/runbook.md` from what it declares, as cirrus-baseline's do; the pages
+  ship with the component. Baseline CI runs it with `--check`.
+- **The context pack.** `ai/context/current.md`, `decisions.md` and
+  `open-risks.md` beside the two pages a site ships with — this
+  repository's own, so no module places them.
+- **Status that agrees with the tags and the live record.** AB4 is shipped
+  and `baseline-v2` tags it with AB5; `baseline-v1` went live on 2026-10-15,
+  so risk AB-G is now about the one-landing shape.
+- **The subdomain from the Cloudflare connection (AB-7).** The card declares
+  `subdomain` as `from: connection.cloudflare.workersSubdomain`, as
+  cirrus-baseline does since baseline-v23, so the console asks for nothing the
+  connection already knows; `testing/manifest.test.sh` requires the source's
+  provider in `spec.requires.integrations`.
+
+**Done when**
+- nothing outside this milestone's own record (its specs, task and context
+  pages) names kiox, and the leak gate and the offline bootstrap pass
+  without the two modules
+- the docs check is green in Baseline CI
+- the card renders no subdomain field, and the manifest gate fails a
+  `connection.` source whose provider the card does not require
+- this file, the status file and `epic.yaml` agree
+
 ## After AB3 (outside this repository)
 
-1. Cut `baseline-v1` with `tag.yml` from the merged `main`.
+1. Cut `baseline-v1` with `tag.yml` from the merged `main` — done.
 2. Register the row in orun-cloud's `infra/baselines-registry/baselines.yaml`
    (unlisted) with the card vendored at the tag.
 3. Bootstrap one site from the tag against a workspace; record its timings;
-   then flip the row to public with a page on orunbase.com.
+   then flip the row to public with a page on orunbase.com. — The bootstrap
+   ran on 2026-10-15 (7m07s, live on stage and prod; IMPLEMENTATION-STATUS).
 
 ## Sequencing note
 

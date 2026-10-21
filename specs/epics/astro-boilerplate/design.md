@@ -100,7 +100,7 @@ different Workers (an adapter upgrade changing its output).
 `ORUN_CI` repository variable, which a bootstrap has no way to set: every site
 would have converged on nothing. It now plans nothing only while
 `intent.yaml` names the placeholder `ws_CHANGE_ME`, which this repository
-carries and no site does (the scaffold writes the site's workspace, or
+carries and no site does (`01-product` writes the site's workspace, or
 `ws_SET_ME`, which fails loudly).
 
 **Testing without the platform.** `testing/lib/bootstrap.sh` places every
