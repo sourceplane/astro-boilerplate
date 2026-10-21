@@ -59,9 +59,9 @@ is proven offline on every pull request: the card against the build, the
 blueprint read by the pinned orun, the leak gate, the offline bootstrap with
 the blueprint's own hooks, the site's own plan for the 01-product merge, and
 the produced site built, dry-deployed, served and smoke-tested in a job tree
-staged as orun stages it. It has not been bootstrapped live, and no tag
-carries it yet. Closes with one bootstrap from the next tag, whose timing
-replaces the 5-minute estimate.
+staged as orun stages it. It has not been bootstrapped live; `baseline-v2`
+is the first tag that carries it. Closes with one bootstrap from
+`baseline-v2`, whose timing replaces the 5-minute estimate.
 
 (Updated in AB5. Until then this entry read "No live bootstrap yet" and
 cited the 02-site merge, a phase AB4 removed.)

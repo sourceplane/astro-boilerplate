@@ -19,9 +19,9 @@ records what went live (`03-docs`).
 
 | | |
 |---|---|
-| Latest tag | `baseline-v1` (AB3: three phases, `01-scaffold`, `02-site`, `03-docs`) |
-| On `main` since | AB4 — one landing ([#5](https://github.com/sourceplane/astro-boilerplate/pull/5), AB-5); AB5 — the cirrus standard (no kiox, generated component docs, this context pack) |
-| Proven live | `baseline-v1`: yes — a console bootstrap went live on stage and prod on 2026-10-15 (`astro-live`, `bst_XYM9M4ZT`, 7m07s). `main`'s one-landing shape: no — proven offline in Baseline CI only, and no tag carries it yet (risk AB-G) |
+| Latest tag | `baseline-v2` — AB4, one landing ([#5](https://github.com/sourceplane/astro-boilerplate/pull/5), AB-5), and AB5, the cirrus standard ([#6](https://github.com/sourceplane/astro-boilerplate/pull/6): no kiox, generated component docs, this context pack, and the workers.dev subdomain read from the Cloudflare connection instead of asked) |
+| Before it | `baseline-v1` (AB3: three phases, `01-scaffold`, `02-site`, `03-docs`) |
+| Proven live | `baseline-v1`: yes — a console bootstrap went live on stage and prod on 2026-10-15 (`astro-live`, `bst_XYM9M4ZT`, 7m07s). `baseline-v2`'s one-landing shape: no — proven offline in Baseline CI only (risk AB-G) |
 
 ## Where to read
 
@@ -35,7 +35,6 @@ records what went live (`03-docs`).
 
 ## Next
 
-1. Cut the next `baseline-vN` with `tag.yml`, so a tag carries AB4 and AB5.
-2. Bootstrap one site from it from the console, and record its timings
-   against the 5-minute estimate and baseline-v1's 7m07s (closes AB-G and
-   AB4's last exit criterion).
+1. Bootstrap one site from `baseline-v2` from the console, and record its
+   timings against the 5-minute estimate and baseline-v1's 7m07s (closes
+   AB-G and AB4's last exit criterion).

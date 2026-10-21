@@ -61,7 +61,8 @@ secrets are minted in `01-product`'s `post`, after `repo` and `link`.
   offline bootstrap and the e2e tier pass over one landing
 - Baseline CI is green
 - a site bootstrapped from the next tag is live faster than baseline-v1's
-  measured 7m07s — not yet: no tag carries AB4 (risk AB-G)
+  measured 7m07s — not yet: `baseline-v2` carries AB4 but has not been
+  bootstrapped live (risk AB-G)
 
 ## AB5 — the cirrus standard (AB-6) ✅
 
@@ -79,15 +80,22 @@ site itself changing.
 - **The context pack.** `ai/context/current.md`, `decisions.md` and
   `open-risks.md` beside the two pages a site ships with — this
   repository's own, so no module places them.
-- **Status that agrees with the tags and the live record.** AB4 is shipped,
-  untagged — the next tag ships it; `baseline-v1` went live on 2026-10-15,
+- **Status that agrees with the tags and the live record.** AB4 is shipped
+  and `baseline-v2` tags it with AB5; `baseline-v1` went live on 2026-10-15,
   so risk AB-G is now about the one-landing shape.
+- **The subdomain from the Cloudflare connection (AB-7).** The card declares
+  `subdomain` as `from: connection.cloudflare.workersSubdomain`, as
+  cirrus-baseline does since baseline-v23, so the console asks for nothing the
+  connection already knows; `testing/manifest.test.sh` requires the source's
+  provider in `spec.requires.integrations`.
 
 **Done when**
 - nothing outside this milestone's own record (its specs, task and context
   pages) names kiox, and the leak gate and the offline bootstrap pass
   without the two modules
 - the docs check is green in Baseline CI
+- the card renders no subdomain field, and the manifest gate fails a
+  `connection.` source whose provider the card does not require
 - this file, the status file and `epic.yaml` agree
 
 ## After AB3 (outside this repository)

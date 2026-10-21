@@ -7,7 +7,7 @@ only what is still live, so it should be short.
 
 | ID | Risk | State | What closes it |
 |---|---|---|---|
-| AB-G | The one-landing shape on `main` (AB4) is not yet proven live; `baseline-v1`'s three phases were (2026-10-15, 7m07s) | OPEN | One console bootstrap from the next tag |
+| AB-G | The one-landing shape (AB4, first tagged in `baseline-v2`) is not yet proven live; `baseline-v1`'s three phases were (2026-10-15, 7m07s) | OPEN | One console bootstrap from `baseline-v2` |
 
 Accepted, and worth knowing before you change them: AB-B (the SWR page's
 cache header needs a Cache Rule on Cloudflare), AB-C's caveat (the image page

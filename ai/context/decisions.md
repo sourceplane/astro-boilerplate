@@ -18,3 +18,4 @@ reads in order.
 | 10 | stack-tectonic 0.19.0, not 0.20.0 | The job installs in its own tree; 0.20.0's lane-shared install broke the Next.js sibling live and would save nothing here | risk AB-J |
 | 11 | orun is pinned only where it runs (the `orun-action` `version:` in each workflow); no kiox | `kiox.yaml` pinned a version (v2.15.0) nothing ran | IMPLEMENTATION-STATUS (AB5) |
 | 12 | Component docs are generated from the manifests and checked in CI | A hand-written copy of the component's facts drifts silently | `tooling/catalog/gen-component-docs.py` |
+| 13 | `subdomain` is read from the Cloudflare connection (`from: connection.cloudflare.workersSubdomain`), never asked | It belongs to the account like its id and has one right answer; a typed one could only be wrong, and showed up after deploy in the smoke and the probes | `blueprint.yaml`, IMPLEMENTATION-STATUS (AB-7) |

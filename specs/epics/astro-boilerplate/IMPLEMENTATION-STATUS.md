@@ -9,8 +9,8 @@ the code departed from `design.md` or from the upstream template.
 | AB1 — the site on Workers | ✅ Shipped | [#2](https://github.com/sourceplane/astro-boilerplate/pull/2) |
 | AB2 — ready to instantiate | ✅ Shipped | [#3](https://github.com/sourceplane/astro-boilerplate/pull/3) |
 | AB3 — a baseline | ✅ Shipped | [#4](https://github.com/sourceplane/astro-boilerplate/pull/4) (AB-4), tagged `baseline-v1` |
-| AB4 — one landing | ✅ Shipped | [#5](https://github.com/sourceplane/astro-boilerplate/pull/5) (AB-5) — on `main`, not yet tagged (the next tag ships it); not yet proven live (risk AB-G) |
-| AB5 — the cirrus standard | ✅ Shipped | AB-6 — on `main` after AB4, not yet tagged |
+| AB4 — one landing | ✅ Shipped | [#5](https://github.com/sourceplane/astro-boilerplate/pull/5) (AB-5), tagged `baseline-v2`; not yet proven live (risk AB-G) |
+| AB5 — the cirrus standard | ✅ Shipped | [#6](https://github.com/sourceplane/astro-boilerplate/pull/6) (AB-6, AB-7), tagged `baseline-v2` |
 
 ## Departures from the upstream template
 
@@ -99,7 +99,43 @@ Nothing about the site changed. What changed is the baseline around it:
 | component docs | none | `apps/web/docs/` — `overview.md`, `architecture.md`, `runbook.md` | cirrus-baseline documents every component; the workspace Docs library renders `docs/` beside each `component.yaml` |
 | how the docs stay true | — | `tooling/catalog/gen-component-docs.py` derives them from the manifest, the Worker config and package scripts; Baseline CI runs it with `--check` | a hand-written copy of a manifest drifts silently |
 | context pack | `operations.md`, `deployment.md` | plus `current.md`, `decisions.md`, `open-risks.md` | cirrus-baseline's shape; the three new pages are this repository's own and no module places them (the leak gate still allows exactly two) |
-| status | AB4 "in progress / this PR"; AB-G "no live bootstrap yet", citing the removed `02-site`; `design.md` naming "the scaffold" as what writes the workspace | AB4 shipped, untagged — the next tag ships it; AB-G: `baseline-v1` went live (2026-10-15), the one-landing shape is not yet proven live — still OPEN; `01-product` writes the workspace | the merge and the live run had happened; the documents had not caught up |
+| status | AB4 "in progress / this PR"; AB-G "no live bootstrap yet", citing the removed `02-site`; `design.md` naming "the scaffold" as what writes the workspace | AB4 shipped, tagged with AB5 in `baseline-v2`; AB-G: `baseline-v1` went live (2026-10-15), the one-landing shape is not yet proven live — still OPEN; `01-product` writes the workspace | the merge and the live run had happened; the documents had not caught up |
+
+### The subdomain from the Cloudflare connection (AB-7)
+
+`subdomain` was the one input an operator typed that the platform could
+answer itself: it belongs to the Cloudflare account the same way its id does,
+and it has exactly one right answer. A typed one could only be wrong, and
+wrong showed up after deploy — in the deploy's smoke, the phase probes and the
+console's verify URLs. `blueprint.yaml` now declares
+`from: connection.cloudflare.workersSubdomain`, as cirrus-baseline does since
+baseline-v23: the Cloudflare integration reads the subdomain at connect and on
+its hourly health check, and the bootstrap door fills the input from the
+connection the build is bound to — the same one `CLOUDFLARE_ACCOUNT_ID` and the
+deploy token mint from. The console renders no field for it, and an account
+with no workers.dev subdomain is refused at the door with the fix named.
+
+- `testing/manifest.test.sh` takes cirrus-baseline's rule verbatim (the file
+  is now byte-identical to cirrus-baseline's): the source is accepted, and
+  only when `spec.requires.integrations` lists its provider.
+- `repo-blueprint.yaml` keeps the input and its default; it, `BOOTSTRAP.md`
+  and `docs/phases/README.md` say only a hand-run build passes
+  `--set subdomain`.
+- Nothing a site carries changes: the rename, the build origin, the smoke and
+  the probes read the value exactly as before.
+
+Verified:
+
+- `testing/{manifest,phases,coverage,rebrand,retouch,bootstrap-defer}.test.sh`
+  green; `gen-component-docs.py --check` green (1 component).
+- Mutation: with `cloudflare` dropped from `spec.requires.integrations`,
+  `manifest.test.sh` fails with exactly one finding, naming
+  `inputs[subdomain]`; restored, it passes.
+- At v2.58.11 (the blueprint job's pin): `orun new --status` reads the
+  document (`01-product` pending, 54 files); `testing/leak.test.sh` 54 files
+  derived; `testing/placement.test.sh` 54 files placed, both landings, the
+  site's own plan deploys `web` to stage and prod side by side.
+- `orun task check AB-7` complete.
 
 ## Verified (AB5)
 
