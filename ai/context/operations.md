@@ -93,7 +93,7 @@ orun integrations list --org <ws> --json && orun cloud check --org <ws>
 | add a page | add `apps/web/src/pages/<route>.astro` (`export const prerender = true` to build it as a static asset), merge |
 | deploy a change | merge to `main`; watch the run; failed lanes → `gh run rerun --failed` |
 | redeploy without a change | edit the last line of `apps/web/component.yaml` (`# orun: redeploy <reason> <stamp>`) and merge — it is a deploy trigger, nothing reads it |
-| serve a custom domain | attach it to the Worker in Cloudflare; set `SITE_URL` for the environment in `intent.yaml` so the deployment record probes it (README, "Custom domain") |
+| serve a custom domain | attach it to the Worker in Cloudflare; set `SITE_URL` for the environment in `intent.yaml` so the deployment record probes it, and replace the placeholder `astro-boilerplate.example.com` in `intent.yaml`'s `BASE_DOMAIN` (dev, stage and prod) with it (README, "Custom domain") |
 | cache `/ssr-with-swr-caching` at the edge | a Cloudflare Cache Rule for the route; the page already sends `s-maxage` and `stale-while-revalidate` |
 | add a runtime secret | `orun secrets set <KEY> --org <ws> --env <env>` |
 | headless credentials | `ORUN_TOKEN` (workspace-scoped) + `GITHUB_TOKEN` |

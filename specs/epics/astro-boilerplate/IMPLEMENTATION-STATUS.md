@@ -11,6 +11,7 @@ the code departed from `design.md` or from the upstream template.
 | AB3 — a baseline | ✅ Shipped | [#4](https://github.com/sourceplane/astro-boilerplate/pull/4) (AB-4), tagged `baseline-v1` |
 | AB4 — one landing | ✅ Shipped | [#5](https://github.com/sourceplane/astro-boilerplate/pull/5) (AB-5), tagged `baseline-v2`; not yet proven live (risk AB-G) |
 | AB5 — the cirrus standard | ✅ Shipped | [#6](https://github.com/sourceplane/astro-boilerplate/pull/6) (AB-6, AB-7), tagged `baseline-v2` |
+| AB6 — the domain is set later | ✅ Shipped | [#7](https://github.com/sourceplane/astro-boilerplate/pull/7) (AB-8), tagged `baseline-v3` |
 
 ## Departures from the upstream template
 
@@ -136,6 +137,56 @@ Verified:
   derived; `testing/placement.test.sh` 54 files placed, both landings, the
   site's own plan deploys `web` to stage and prod side by side.
 - `orun task check AB-7` complete.
+
+## The domain is set later (AB6, AB-8)
+
+The console asked for the site's domain, with help text that said it did not
+need to exist — and nothing in the build needed one: the site answers on
+workers.dev from its first deploy, it builds no absolute links (no `site`
+in `astro.config.ts`, no sitemap), and `03-docs` probes an environment's
+`SITE_URL` only when an owner has set one, which nothing does by default.
+The places the repository names the domain are `BASE_DOMAIN` in
+`intent.yaml` (dev, stage and prod) and the `SITE_URL` example in the
+README's "Custom domain". A domain is an owner's step after the bootstrap,
+so the form no longer asks for it.
+
+- `blueprint.yaml` declares no `productdomain` input; the console's Product
+  step asks for the site's name alone.
+- `repo-blueprint.yaml`'s `productdomain` is optional, default empty. A
+  hand-run build may still pass `--set productdomain=` for a site that
+  already has its domain. Nothing else in the build reads it: no hook, probe
+  or `when:` names it, only the `.rebrand/values.json` template, which
+  writes `""`.
+- `rebrand.mjs` no longer requires it. Empty, it brands the reserved
+  placeholder `<reponame>.example.com` (RFC 2606 — never someone else's
+  domain) where the domain goes, so setting it later is replacing one
+  string; the product README ("Custom domain", step 2) and
+  `ai/context/operations.md` say so.
+- `testing/fixtures/acme.json` carries no domain, so the leak gate and the
+  offline bootstrap exercise exactly what a console build supplies;
+  `testing/rebrand.test.sh` pins the placeholder for an absent and an empty
+  domain; `baseline.yml`'s blueprint read sets no domain.
+
+Nothing that needs a domain was removed — it waits for one.
+
+Verified:
+
+- `testing/{manifest,phases,coverage,rebrand,retouch,bootstrap-defer}.test.sh`
+  green (`rebrand.test.sh`: 26 checks, two of them new — and those two fail
+  against the old `rebrand.mjs`); `gen-component-docs.py --check` green (1
+  component).
+- `orun new --status` (v2.58.11) with no `productdomain`: `01-product`
+  pending (54 files). `testing/leak.test.sh` (v2.58.11): 54 files derived;
+  ai/context still exactly the two declared pages.
+- `testing/placement.test.sh` (v2.58.11, as Baseline CI runs it): 54 files
+  placed, both landings, branded, the site's own `orun plan` green,
+  `--resume` changes nothing.
+- The offline bootstrap's site, kept and read: `.rebrand/values.json` has
+  `"productdomain": ""`; `intent.yaml`'s `BASE_DOMAIN` is
+  `acme-astro-site.example.com` in all three environments and sets no
+  `SITE_URL`; the README's example and `ai/context/operations.md` name that
+  same string (6 lines, 3 files); `rebrand --verify` finds no leftover.
+- `orun task check AB-8` complete.
 
 ## Verified (AB5)
 
