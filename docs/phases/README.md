@@ -50,9 +50,16 @@ probe it.
 `01-product` takes the site's identity once and writes it into the repo
 (`.rebrand/values.json`); every later phase reads it back from the placed
 tree. But the blueprint's **required** inputs — `reponame`, `productname`,
-`productdomain`, `githuborg` — are validated before any phase runs, so they
-must be supplied on every invocation, single-phase ones included. A
-`--values` file is easier than repeating `--set`.
+`githuborg` — are validated before any phase runs, so they must be supplied
+on every invocation, single-phase ones included. A `--values` file is easier
+than repeating `--set`.
+
+- `productdomain` — NOT ASKED, default empty. The site goes live on
+  workers.dev; empty brands the reserved placeholder `<reponame>.example.com`
+  into `BASE_DOMAIN` (and the README's `SITE_URL` example), for an owner to
+  replace when they attach a domain (the site's README, "Custom domain").
+  `03-docs` probes `SITE_URL`, which nothing sets until then, never the
+  placeholder. Pass it only for a site that already has its domain.
 
 - `subdomain` — the workers.dev subdomain of the Cloudflare account you
   deploy into. It is in every URL the phases probe and the one the deploy's

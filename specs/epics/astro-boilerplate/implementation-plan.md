@@ -98,6 +98,15 @@ site itself changing.
   `connection.` source whose provider the card does not require
 - this file, the status file and `epic.yaml` agree
 
+## AB6 — the domain is set later (AB-8) ✅
+
+**Done when** the console card asks for no domain; `productdomain` is an
+optional build input, empty by default; a site built without one is branded
+with the reserved placeholder `<reponame>.example.com` where the domain goes
+(`BASE_DOMAIN` in `intent.yaml`, the README's `SITE_URL` example) and its
+README says how an owner sets the real one; Baseline CI places, leak-checks
+and plans a site built with no domain. Shipped in `baseline-v3`.
+
 ## After AB3 (outside this repository)
 
 1. Cut `baseline-v1` with `tag.yml` from the merged `main` — done.

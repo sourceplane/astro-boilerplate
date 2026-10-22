@@ -91,5 +91,10 @@ own domain:
          SITE_URL: https://astro-boilerplate.example.com
    ```
 
+   The site was born with the reserved placeholder
+   `astro-boilerplate.example.com` where its domain goes: that example, and
+   `BASE_DOMAIN` under each environment (dev, stage and prod) in
+   `intent.yaml`. Replace it with your domain in the same change.
+
 The site builds no absolute links, so nothing needs rebuilding for the domain
 to serve it.
