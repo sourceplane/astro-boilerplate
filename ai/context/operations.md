@@ -1,7 +1,7 @@
 # astro-boilerplate — operating contract (for humans and agents)
 
 This is the standing guide to how this site is deployed and operated.
-Instance facts (live URLs, workspace, secrets inventory) live in
+Instance facts (live URLs, workspace, the secrets it uses) live in
 [deployment.md](deployment.md), rendered from probed reality by the
 bootstrap's `03-docs` phase; this file is the contract that stays true
 between deployments. It is written to give an agent with repository read
@@ -17,8 +17,10 @@ desired-state repo.
   Worker plus Static Assets. The home page is pre-rendered at build time and
   served from the assets; `/ssr`, `/ssr-with-swr-caching` and `/image` are
   rendered by the Worker on every request. Its tests (`src/test`, vitest over
-  Astro's container API) run in Checks on every pull request. There is no
-  database and no runtime secret.
+  Astro's container API) and `astro check` are not run by a pull request's
+  lanes, which build and dry-deploy the site: run `pnpm typecheck`,
+  `pnpm lint` and `pnpm test` before you push. There is no database and no
+  runtime secret.
 - **`tooling/*`** — shared TypeScript and ESLint configuration, and the
   deploy-time wrangler renderer for workers that take wiring.
 
