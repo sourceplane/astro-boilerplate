@@ -128,3 +128,14 @@ green while `ci.yml`'s deploy lanes had failed (its PK-K). `checks.yml` here
 runs on pull requests and `workflow_dispatch` only, and
 `testing/coverage.test.sh` fails if a shipped workflow other than `ci.yml`
 runs on a push to main.
+
+## AB-L — 03-docs needs PyYAML the build box lacks (RESOLVED)
+
+`hooks/render-deployment-docs.sh` imported `yaml` to read `SITE_URL` from
+`intent.yaml`. The build box has python3 but not PyYAML, so the import failed
+with exit 1 and no message. A console build (`vijayakrishnans/astro-site`,
+2026-11-06) stopped at 03-docs with its site live on stage and prod; local and
+CLI runs had PyYAML and passed. blog-starter hit the same bug first (its BS-H).
+The hook now uses PyYAML when present and reads that one key by indentation
+otherwise. `testing/render.test.sh` runs it under a python3 with no third-party
+packages.
